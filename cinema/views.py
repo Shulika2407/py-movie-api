@@ -8,9 +8,9 @@ from cinema.serializers import MovieSerializer
 
 
 # Create your views here.
-@api_view(['GET', "POST"])
+@api_view(["GET", "POST"])
 def movies_list(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         movies = Movie.objects.all()
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=200)
@@ -21,14 +21,15 @@ def movies_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', "PUT", "DELETE"])
-def movies_detail(request, pk):
-    movie = Movie.objects.get(pk=pk)
-    if request.method == 'GET':
-        serializer = MovieSerializer(movie)
-        return JsonResponse(serializer.data, status=200)
 
-    elif request.method == 'PUT':
+@api_view(["GET", "PUT", "DELETE"])
+def movies_detail(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    if request.method == "GET":
+        serializer = MovieSerializer(movie)
+        return Response(serializer.data, status=200)
+
+    elif request.method == "PUT":
         serializer = MovieSerializer(movie, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,4 +38,3 @@ def movies_detail(request, pk):
     else:
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
